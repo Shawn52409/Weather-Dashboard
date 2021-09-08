@@ -2,28 +2,43 @@ var APIKey = "ee5bba5a0ab601cf94442ccef226d4cf";
 var currentDate = moment().format('dddd (l)');
 var searchHistory = [];
 
-
-
+// 
+function populateSearchHistory (city){
+    if (!searchHistory.includes(city)){
+        searchHistory.push(city);
+            $("#searchcontent").append(`
+            <li class="text-capitalize btn btn-info btn-block gap-2 w-75">${city}</li>
+            `)
+            
+            localStorage.setItem("searchInput", searchHistory);
+        };
+}
 
 // function called after a search is made
-function getWeather(event){    
-    event.preventDefault();
-
-    // $(event.target).text
+function getWeather(evt){    
+    evt.preventDefault();
+    
+ 
     var searchInput = $("#search-input").val().trim();    
-    // var searchInput = event;
-
+      
     // if search does not bring up a city then quit out of function
     if (searchInput === null){
         return;
     }  
+    
+    // remove search from bar
+    $('#search-input').val('');  
 
+    getWeatherByCity(searchInput);
+}
 
+// function with api calls
+function getWeatherByCity(searchInput){
+    
     // first api call using city from user's search
     var queryURL = "http://api.openweathermap.org/data/2.5/weather?q=" + searchInput + "&units=imperial&appid=" + APIKey;
     
-    // remove search from bar
-    $('#search-input').val('');    
+    
     
     // fetch request for current weather
     fetch(queryURL)
@@ -36,14 +51,7 @@ function getWeather(event){
                 console.log(data);                           
                 
 
-                if (!searchHistory.includes(searchInput)){
-                    searchHistory.push(searchInput);
-                        $("#searchcontent").append(`
-                        <li class="text-capitalize btn btn-info btn-block gap-2 w-75">${searchInput}</li>
-                        `)
-                        
-                        localStorage.setItem("searchInput", searchHistory);
-                    };
+                populateSearchHistory(searchInput);
 
                 // variables used to lookup icon for current weather
                 var iconCode = data.weather[0].icon;
@@ -121,13 +129,33 @@ function getWeather(event){
             });
         });              
     };
-    
-$("#searchcontent").on("click", "li", function(){
-    var searchListCity = $(this).text();
-    getWeather(searchListCity);
+
+
+
+$("#searchcontent").on("click", "li", function(evt){
+    var searchListCity = $(evt.target).text();
+    getWeatherByCity(searchListCity);
 });
 
-$("button").on("click", getWeather);
-//     var searchInput = $("#search-input").val().trim();
-//     getWeather(searchInput);
-// });
+$("#search-btn").on("click", getWeather);
+
+(function myinit(){
+
+    var searchList = localStorage.getItem("searchInput");
+    if (searchList === null){
+        return;
+    }
+    console.log(searchList);
+    var searchListArr = searchList.split(",");
+    console.log(searchListArr);
+    for(var i =0; i < searchListArr.length; i++){
+        populateSearchHistory(searchListArr[i]);
+    }
+
+})();
+
+$("#clearHistory").on("click", function(){
+    searchHistory = [];
+    localStorage.removeItem("searchInput");
+    $("#searchcontent").empty();
+});
