@@ -2,7 +2,7 @@ var APIKey = "ee5bba5a0ab601cf94442ccef226d4cf";
 var currentDate = moment().format('dddd (l)');
 var searchHistory = [];
 
-// 
+// function to create search history
 function populateSearchHistory (city){
     if (!searchHistory.includes(city)){
         searchHistory.push(city);
@@ -18,8 +18,7 @@ function populateSearchHistory (city){
 function getWeather(evt){    
     evt.preventDefault();
     
- 
-    var searchInput = $("#search-input").val().trim();    
+     var searchInput = $("#search-input").val().trim();    
       
     // if search does not bring up a city then quit out of function
     if (searchInput === null){
@@ -37,9 +36,7 @@ function getWeatherByCity(searchInput){
     
     // first api call using city from user's search
     var queryURL = "http://api.openweathermap.org/data/2.5/weather?q=" + searchInput + "&units=imperial&appid=" + APIKey;
-    
-    
-    
+           
     // fetch request for current weather
     fetch(queryURL)
         .then(function (response){
@@ -50,7 +47,6 @@ function getWeatherByCity(searchInput){
             response.json().then(function (data){
                 console.log(data);                           
                 
-
                 populateSearchHistory(searchInput);
 
                 // variables used to lookup icon for current weather
@@ -96,7 +92,7 @@ function getWeatherByCity(searchInput){
                                 $("span").css("background-color", "violet")
                             }
 
-                            var cityForcast = [];
+                            
                             // Clear header if there was a previous search
                             $("#header-5day").empty();                            
                             // Create a header for the 5 day forecast
@@ -130,15 +126,23 @@ function getWeatherByCity(searchInput){
         });              
     };
 
-
-
+// search history handler    
 $("#searchcontent").on("click", "li", function(evt){
     var searchListCity = $(evt.target).text();
     getWeatherByCity(searchListCity);
 });
 
+// Search button handler
 $("#search-btn").on("click", getWeather);
 
+// clear history button handler
+$("#clearHistory").on("click", function(){
+    searchHistory = [];
+    localStorage.removeItem("searchInput");
+    $("#searchcontent").empty();
+});
+
+// load search history from local storage
 (function myinit(){
 
     var searchList = localStorage.getItem("searchInput");
@@ -153,9 +157,3 @@ $("#search-btn").on("click", getWeather);
     }
 
 })();
-
-$("#clearHistory").on("click", function(){
-    searchHistory = [];
-    localStorage.removeItem("searchInput");
-    $("#searchcontent").empty();
-});
