@@ -35,7 +35,7 @@ function getWeather(evt){
 function getWeatherByCity(searchInput){
     
     // first api call using city from user's search
-    var queryURL = "http://api.openweathermap.org/data/2.5/weather?q=" + searchInput + "&units=imperial&appid=" + APIKey;
+    var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchInput + "&units=imperial&appid=" + APIKey;
            
     // fetch request for current weather
     fetch(queryURL)
