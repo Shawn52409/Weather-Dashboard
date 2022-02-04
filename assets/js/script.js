@@ -7,12 +7,16 @@ function populateSearchHistory (city){
     if (!searchHistory.includes(city)){
         searchHistory.push(city);
             $("#searchcontent").append(`
-            <li class="text-capitalize btn btn-info btn-block gap-2 w-75">${city}</li>
+            <li class="text-capitalize btn btn-info btn-block gap-2 w-100">${city}</li>
             `)
-            
+            document.getElementById("clearHistory").style.visibility = "visible";
             localStorage.setItem("searchInput", searchHistory);
         };
 }
+
+function changeVisibility() {
+    document.getElementById("clearHistory").style.visibility = "hidden";
+  }
 
 // function called after a search is made
 function getWeather(evt){    
@@ -55,7 +59,7 @@ function getWeatherByCity(searchInput){
                 
                 // create container in html for city's current weather
                 $("#currentCityWeather").empty();
-                $("#currentCityWeather").addClass("col-11 border border-dark bg-light");
+                $("#currentCityWeather").addClass("col-11 m-3 border border-dark bg-light");
                 $("#currentCityWeather").append(`
                     <h2><strong><u>${data.name}</u></stong><br></h2>
                     <h2>${currentDate}</h2>
@@ -97,7 +101,7 @@ function getWeatherByCity(searchInput){
                             $("#header-5day").empty();                            
                             // Create a header for the 5 day forecast
                             $("#header-5day").append(`
-                            <h3 class="p-2">5-Day Forecast</h3>`);
+                            <h3 class="m-2 p-2">5-Day Forecast</h3>`);
                             
                             // loop used to create 5 containers for the 5 day forecast
                             for(var i = 1; i < 6; i++){
@@ -109,7 +113,7 @@ function getWeatherByCity(searchInput){
                                 // container if there was a previous search
                                 $(`#day-${i}-forecast`).empty();
                                 // adding class with bootstrap library for styling
-                                $(`#day-${i}-forecast`).addClass("col-md-2 p-1 m-2 text-white bg-primary");
+                                $(`#day-${i}-forecast`).addClass("col-md-2 m-2 text-white bg-primary");
                                 // Create the container with a future day's data
                                 $(`#day-${i}-forecast`).append(`
                                     <h3 class="fs-1">${date}</h3>

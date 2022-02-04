@@ -24,28 +24,25 @@
 
   <body>
     <header class="jumbotron">
-      <h1 class="display-3">Weather Dashboard</h1>
+      <h1 class="display-3"><b>Weather Dashboard</b></h1>
     </header>
   <div class="row">
-    <nav class="col-3 col-md-3 p-3"><!-- Start Nav Cell -->
+    <div class="col-md-3 p-3 m-3"><!-- Start Nav Cell -->
       <h1 class="text-primary">Search for a City:</h1>
       <form id="search-form" class="mb-2">
         <input id="search-input" class="form-input w-100 p-2 mb-2" type="text" placeholder="Type city here">
         <button id="search-btn" class="btn btn-success btn-block">Search</button>
       </form>
-      <div>
-        <ul id="searchcontent">
-
-        </ul>
+      <div id="searchcontent">
       </div><br/>
-      <button id="clearHistory" class="btn btn-danger btn-small btn-block">Clear History
+      <button id="clearHistory" onclick="changeVisibility()" class="btn btn-danger btn-small btn-block">Clear History
 
       </button>
-    </nav><!-- End nav cell -->
+    </div><!-- End nav cell -->
 
-    <div id="content" class="col-9">
+    <div id="content" class="col-md-8">
 
-        <div class="row">
+        <div class="row m-2">
           <div id="currentCityWeather">
           <!--Current Weather container-->
           </div>
@@ -55,7 +52,7 @@
             <!-- 5 day forcast header -->
           </div>
         </div>
-        <div class="row">
+        <div class="row m-2">
           <div id="day-1-forecast">
             <!-- 5 day forcast day 1 container -->
           </div>  
