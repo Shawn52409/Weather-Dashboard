@@ -3,14 +3,14 @@ var currentDate = moment().format('dddd (l)');
 var searchHistory = [];
 
 // function to create search history
-function populateSearchHistory (city){
-    if (!searchHistory.includes(city)){
-        searchHistory.push(city);
+function populateSearchHistory (location){
+    if (!searchHistory.some(searchHistory => searchHistory.zipCode === location.zipCode)){
+        searchHistory.push(location);
             $("#searchcontent").append(`
-            <li class="text-capitalize btn btn-info btn-block gap-2 w-100">${city}</li>
+            <li class="text-capitalize btn btn-info btn-block gap-2 w-100" value="${location.zipCode}">${location.cityName} (${location.zipCode})</li>
             `)
             document.getElementById("clearHistory").style.visibility = "visible";
-            localStorage.setItem("searchInput", searchHistory);
+            localStorage.setItem("searchInput", JSON.stringify(searchHistory));
         };
 }
 
@@ -22,7 +22,8 @@ function changeVisibility() {
 function getWeather(evt){    
     evt.preventDefault();
     
-     var searchInput = $("#search-input").val().trim();    
+     var searchInput = $("#search-input").val().trim();
+    //  var stateInput = $("#state-input").val();    
       
     // if search does not bring up a city then quit out of function
     if (searchInput === null){
@@ -31,7 +32,6 @@ function getWeather(evt){
     
     // remove search from bar
     $('#search-input').val('');  
-
     getWeatherByCity(searchInput);
 }
 
@@ -39,19 +39,17 @@ function getWeather(evt){
 function getWeatherByCity(searchInput){
     
     // first api call using city from user's search
-    var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchInput + "&units=imperial&appid=" + APIKey;
-           
+    var queryURL = "https://api.openweathermap.org/data/2.5/weather?zip=" + searchInput + "&units=imperial&appid=" + APIKey;
     // fetch request for current weather
     fetch(queryURL)
         .then(function (response){
-            console.log(response);                      
             if (!response.ok){
                 return;
             }
             response.json().then(function (data){
-                console.log(data);                           
                 
-                populateSearchHistory(searchInput);
+                var location = {cityName: data.name, zipCode: searchInput}
+                populateSearchHistory(location);
 
                 // variables used to lookup icon for current weather
                 var iconCode = data.weather[0].icon;
@@ -80,7 +78,6 @@ function getWeatherByCity(searchInput){
                 fetch(queryURL_onecall)
                     .then(function (response_onecall){
                         response_onecall.json().then(function (data_onecall){
-                            console.log(data_onecall);
                             $("#currentCityWeather").append(`
                             <div id="uvIndex">UV Index: <span>${data_onecall.current.uvi}</span></div><br> 
                             `);
@@ -132,8 +129,8 @@ function getWeatherByCity(searchInput){
 
 // search history handler    
 $("#searchcontent").on("click", "li", function(evt){
-    var searchListCity = $(evt.target).text();
-    getWeatherByCity(searchListCity);
+    var searchListZip = evt.target.getAttribute('value');
+    getWeatherByCity(searchListZip);
 });
 
 // Search button handler
@@ -150,14 +147,14 @@ $("#clearHistory").on("click", function(){
 (function myinit(){
 
     var searchList = localStorage.getItem("searchInput");
+    
     if (searchList === null){
         return;
     }
-    console.log(searchList);
-    var searchListArr = searchList.split(",");
-    console.log(searchListArr);
-    for(var i =0; i < searchListArr.length; i++){
-        populateSearchHistory(searchListArr[i]);
+    var parsedSearchList = JSON.parse(searchList);
+    // var searchListArr = parsedSearchList.split(",");
+    for(var i =0; i < parsedSearchList.length; i++){
+        populateSearchHistory(parsedSearchList[i]);
     }
 
 })();
